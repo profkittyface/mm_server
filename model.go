@@ -1,10 +1,10 @@
 package main
 
 import (
-  "time"
-  "github.com/uptrace/bun"
-  "context"
-  "fmt"
+	"context"
+	"fmt"
+	"github.com/uptrace/bun"
+	"time"
 )
 
 type User struct {
@@ -58,6 +58,23 @@ type LocationKey struct {
 	LastUpdated   time.Time `bun:"last_updated,default:current_timestamp"`
 }
 
+type LoginTrack struct {
+	bun.BaseModel `bun:"auth_key"`
+	Id            int       `bun:"id"`
+	Userid        int       `bun:"userid"`
+	CookieKey     string    `bun:"cookie_key"`
+	Expires       time.Time `bun:"expires"`
+}
+
+type Profile struct {
+	bun.BaseModel `bun:"profile"`
+	Id            int    `bun:"id"`
+	Userid        int    `bun:"userid"`
+	AboutMe       string `bun:"about_me"`
+	Interests     string `bun:"interests"`
+	Location      string `bun:"location"`
+}
+
 func getUserFromUsername(username string) (User, error) {
 	ctx := context.Background()
 	db := getCursor()
@@ -69,14 +86,40 @@ func getUserFromUsername(username string) (User, error) {
 	return user, nil
 }
 
-func getUserFromId(userid int) (User) {
+func getUserFromId(userid int) User {
 	ctx := context.Background()
 	db := getCursor()
 	user := User{}
 	db.NewSelect().Model(&user).Where("id = ?", userid).Scan(ctx)
 	if user.Id == 0 {
 		fmt.Println("Userid not found")
-    return user
+		return user
 	}
 	return user
+}
+
+func getIdFromUser(username string) int {
+	ctx := context.Background()
+	db := getCursor()
+	user := User{}
+	db.NewSelect().Model(&user).Where("username = ?", username).Scan(ctx)
+	return user.Id
+}
+
+func getUserFromCookieKey(cookie_key string) User {
+  user := User{}
+  ctx := context.Background()
+  db := getCursor()
+  lt := LoginTrack{}
+  db.NewSelect().Model(&lt).Where("cookie_key = ?", cookie_key).Scan(ctx)
+  db.NewSelect().Model(&user).Where("userid = ?", lt.Userid).Scan(ctx)
+  return user
+}
+
+func getProfileFromId(userid int) Profile {
+  profile := Profile{}
+  ctx := context.Background()
+  db := getCursor()
+  db.NewSelect().Model(&profile).Where("userid = ?", userid).Scan(ctx)
+  return profile
 }

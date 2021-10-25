@@ -1,0 +1,14 @@
+{{ define "login.tmpl" }}
+<html>
+<body>
+  <form action="/login" method="POST">
+    <input type="username" placeholder="Username" name="username"></input>
+    <input type="password" placeholder="Password" name="password"></input>
+    <button type="submit">Submit</button>
+  </form>
+  {{ if .auth }}
+    You are logged in with key {{.auth}}
+  {{ end }}
+</body>
+</html>
+{{ end }}
