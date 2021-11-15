@@ -21,12 +21,24 @@ func main() {
 	router.GET("/events", getEvent)
 	router.GET("/profile", getProfile)
 
+	router.GET("/debug", debug)
+
 	router.Run(":8080")
+}
+
+func debug(c *gin.Context){
+	GetDailyCluster()
 }
 
 type Dashboard struct {
 	User User
 	Profile Profile
+}
+
+type NewEvent struct {
+	Title string
+	Description string
+
 }
 
 func getDashboard(c *gin.Context){
