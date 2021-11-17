@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	// "fmt"
+	"fmt"
 	"context"
 	"time"
 )
@@ -48,6 +48,8 @@ func getDashboard(c *gin.Context){
 	auth, _ := c.Cookie("mm_auth")
 	if CheckCookieKey(auth){
 		user := getUserFromCookieKey(auth)
+		fmt.Println(auth)
+		fmt.Println(user)
 		profile := getProfileFromId(user.Id)
 		dashboard := Dashboard{User: user, Profile: profile}
 		c.JSON(200, dashboard)

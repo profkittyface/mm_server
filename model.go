@@ -112,7 +112,7 @@ func getUserFromCookieKey(cookie_key string) User {
   db := getCursor()
   lt := LoginTrack{}
   db.NewSelect().Model(&lt).Where("cookie_key = ?", cookie_key).Scan(ctx)
-  db.NewSelect().Model(&user).Where("userid = ?", lt.Userid).Scan(ctx)
+  db.NewSelect().Model(&user).Where("id = ?", lt.Userid).Scan(ctx)
   return user
 }
 
